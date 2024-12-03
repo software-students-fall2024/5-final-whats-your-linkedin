@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | SplitSmart</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="loaded">
+
+    <div class="site-container">
+        <header class="site-header">
+            <h1 class="site-title">
+                <a href="/">SplitSmart</a>
+            </h1>
+        </header>
+
+        <main class="site-content">
+            <div class="row login-container">
+
+                <h1 class="site-tagline">Welcome</h1>
+
+                <form action="/login" method="POST" class="example">
+                    <input type="text" name="username" placeholder="Username" required class="large-1">
+                    <input type="password" name="password" placeholder="Password" required class="large-1">
+                    <button type="submit" class="button">Login</button>
+                </form>
+
+                <div class="signup">
+                    <p class="small">Don't have an account? <a href="{{ url_for('register') }}">Sign Up</a></p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="site-footer">
+            <p>&copy; 2024 SplitSmart. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
