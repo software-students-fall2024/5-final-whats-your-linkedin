@@ -201,3 +201,48 @@ footer {
     border-radius: 5px;
     margin-bottom: 20px;
 }
+
+.welcome-container {
+    text-align: center;
+    margin-top: 10%;
+}
+
+.welcome-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    color: #2c2c2c;
+}
+
+.welcome-container p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: #747474;
+}
+
+.action-buttons a {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 0 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 4px;
+    background-color: #90D4C5;
+    color: #fff;
+    transition: background 0.3s ease;
+}
+
+.action-buttons a:hover {
+    background-color: #2c2c2c;
+}
+
+.action-buttons .secondary {
+    background-color: #f0f0f0;
+    color: #333;
+    border: 1px solid #ccc;
+}
+
+.action-buttons .secondary:hover {
+    background-color: #ccc;
+}
