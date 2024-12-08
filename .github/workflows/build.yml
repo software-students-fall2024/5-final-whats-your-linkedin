@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          venv/bin/python -m pytest tests
+          venv/bin/python -m pytest web_test.py
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
