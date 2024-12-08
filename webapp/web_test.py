@@ -14,8 +14,6 @@ def client():
 def test_user():
     """Insert a test user into the DB and yield it for testing."""
     user_id = ObjectId()
-    # Password "testpass" hashed with bcrypt (example hash)
-    # You can generate your own hash using bcrypt in a Python shell.
     hashed_password = b"$2b$12$W0.Vj4Rg.T/JC2yKWZVJZ.u42eQZMebZxbXr6kJ9QZPdbjXQfSG06"
     user = {
         "_id": user_id,
