@@ -7,20 +7,19 @@ import mongomock
 
 @pytest.fixture(autouse=True)
 def set_test_env(monkeypatch):
-    # Mock environment variables
+    # Set the environment variables
     monkeypatch.setenv("MONGO_DBNAME", "TestDB")
-    monkeypatch.setenv("MONGO_URI", "mongodb+srv://hugobray01:AmosBloomberg@splitsmart.ursnd.mongodb.net/?retryWrites=true&w=majority&appName=SplitSmart")
+    monkeypatch.setenv("MONGO_URI", "mongodb://localhost:27017")
 
 @pytest.fixture
 def mock_mongo_client(monkeypatch):
     # Replace the real MongoClient with a mongomock client
     mock_client = mongomock.MongoClient()
-    monkeypatch.setattr("app.client", mock_client)
-    # Use the mock database
-    db = mock_client["TestDB"]
-    monkeypatch.setattr("app.col_users", db["USERS"])
-    monkeypatch.setattr("app.col_groups", db["GROUPS"])
+    mock_db = mock_client["TestDB"]  
+    monkeypatch.setattr("app.col_users", mock_db["USERS"])
+    monkeypatch.setattr("app.col_groups", mock_db["GROUPS"])
     return mock_client
+
 
 @pytest.fixture
 def client():
