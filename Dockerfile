@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED=1
 # Set working directory
 WORKDIR /webapp
 
-# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libpq-dev \
@@ -19,10 +18,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install pipenv
 RUN pip install --no-cache-dir pipenv
 
-# Copy Pipfile to the container
-COPY Pipfile /webapp/
+RUN pip install flask
+RUN pip install psycopg2-binary
+RUN pip install pymongo
+RUN pip install bcrypt 
+RUN pip install python-dotenv
 
-# Run pipenv lock to generate a new Pipfile.lock
+# Ensure pipenv is in PATH
+ENV PATH="/root/.local/bin:$PATH"
+
 RUN pipenv lock
 
 # Install dependencies using the new Pipfile.lock
@@ -32,8 +36,7 @@ RUN pipenv install --system --deploy
 COPY webapp/ /webapp
 
 # Expose port
-EXPOSE 5001
+EXPOSE 5000
 
 # Command to run the application
 CMD ["python", "app.py"]
-
