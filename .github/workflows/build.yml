@@ -29,11 +29,12 @@ jobs:
           venv/bin/pip install -r requirements.txt
 
       - name: Run tests with coverage
+        env:
+          MONGO_DBNAME: TestDB
+          MONGO_URI: TestUrl
         run: |
-          env: |
-             MONGO_DBNAME: TestDB
-             MONGO_URI: TestUrl
           venv/bin/python -m pytest webapp/web_test.py
+
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
