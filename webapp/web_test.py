@@ -9,7 +9,7 @@ import mongomock
 def set_test_env(monkeypatch):
     # Mock environment variables
     monkeypatch.setenv("MONGO_DBNAME", "TestDB")
-    monkeypatch.setenv("MONGO_URI", "mocked://localhost")
+    monkeypatch.setenv("MONGO_URI", "mongodb+srv://hugobray01:AmosBloomberg@splitsmart.ursnd.mongodb.net/?retryWrites=true&w=majority&appName=SplitSmart")
 
 @pytest.fixture
 def mock_mongo_client(monkeypatch):
