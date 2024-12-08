@@ -6,9 +6,13 @@
 <section id="groups" class="row">
     <h1>My Groups</h1>
     <p>Below are the groups you are part of. Select a group to view details or manage expenses.</p>
-    <ul class="group-list">
+    <div class="search-bar-container">
+            <input type="text" id="search-bar" placeholder="Search by group name" oninput="filterGroups()">
+            <a href="{{ url_for('create_group') }}" class="create-group-button">Create New Group</a>
+    </div>
+    <div class="group-container" id="group-list">
         {% for group in groups %}
-            <li class="group-item">
+            <div class="group-item">
                 <!-- Link to group details page -->
                 <a href="{{ url_for('group_details', group_id=group['group_id']) }}" class="group-link">
                     <strong>{{ group['group_name'] }}</strong>
@@ -27,12 +31,28 @@
                         </li>
                     {% endfor %}
                 </ul>
-            </li>
+            </div>
         {% else %}
-            <li>You are not part of any groups yet.</li>
+            <p>You are not part of any groups yet.</p>
         {% endfor %}
-    </ul>    
-    <a href="{{ url_for('create_group') }}" class="button">Create New Group</a>
+    </ul>
 </section>
+
+<script>
+    function filterGroups() {
+        const query = document.getElementById('search-bar').value.toLowerCase();
+        const groupList = document.getElementById('group-list');
+        const groupItems = groupList.getElementsByClassName('group-item');
+        
+        for (let i = 0; i < groupItems.length; i++) {
+            const groupName = groupItems[i].querySelector('.group-link strong').textContent.toLowerCase();
+            if(groupName.includes(query)) {
+                groupItems[i].style.display = '';
+            } else {
+                groupItems[i].style.display = 'none';
+            }
+        }
+    }
+    </script>
 {% endblock %}
 
