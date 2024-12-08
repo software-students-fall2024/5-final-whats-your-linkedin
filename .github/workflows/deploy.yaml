@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+         token: ${{ secrets.DO_API_KEY }}
       - name: Checkout repository
         uses: actions/checkout@v2
 
