@@ -15,4 +15,3 @@ python-dotenv==1.0.1
 pytest_mock_resources
 pytest
 python-on-whales
-mongomock

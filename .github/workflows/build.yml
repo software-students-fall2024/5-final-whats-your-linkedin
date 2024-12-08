@@ -30,6 +30,9 @@ jobs:
 
       - name: Run tests with coverage
         run: |
+          env: |
+              MONGO_DBNAME: TestDB
+              MONGO_URI: mongodb://localhost:27017/TestDB
           venv/bin/python -m pytest webapp/web_test.py
 
       - name: Log in to Docker Hub
