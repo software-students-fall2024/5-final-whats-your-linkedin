@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+app.secret_key = os.getenv("SECRET_KEY")
 
 # MongoDB Connection
 uri = os.getenv("MONGO_URI")
