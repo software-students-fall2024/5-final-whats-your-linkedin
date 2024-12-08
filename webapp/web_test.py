@@ -2,30 +2,40 @@ import pytest
 from bson import ObjectId
 from app import app, col_users, col_groups
 from flask import session
-import mongomock
+import os
+from unittest.mock import patch, MagicMock
+import pytest
 
-
-@pytest.fixture(autouse=True)
-def set_test_env(monkeypatch):
-    # Set the environment variables
-    monkeypatch.setenv("MONGO_DBNAME", "TestDB")
-    monkeypatch.setenv("MONGO_URI", "mongodb://localhost:27017")
-
-@pytest.fixture
-def mock_mongo_client(monkeypatch):
-    # Replace the real MongoClient with a mongomock client
-    mock_client = mongomock.MongoClient()
-    mock_db = mock_client["TestDB"]  
-    monkeypatch.setattr("app.col_users", mock_db["USERS"])
-    monkeypatch.setattr("app.col_groups", mock_db["GROUPS"])
-    return mock_client
 
 
 @pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    with app.test_client() as client:
-        yield client
+def app_fixture():
+    """
+    Create and configure a new app instance for testing with mocked db.
+    """
+    with patch.dict(
+        os.environ,
+        {
+            "MONGO_URI": "mongodb://localhost:27017",
+            "MONGO_DBNAME": "test_database",
+            "SECRET_KEY": "test_secret_key",
+        },
+    ):
+        with patch("app.MongoClient") as mock_mongo_client:
+            # Mock database and collection
+            mock_db = MagicMock()
+            mock_mongo_client.return_value = {"test_database": mock_db}
+
+            app.config.update({"TESTING": True})
+            yield app, mock_db
+
+@pytest.fixture
+def client(app_fixture):
+    """
+    A test client for the app.
+    """
+    app, _ = app_fixture
+    return app.test_client()
 
 @pytest.fixture
 def test_user():
