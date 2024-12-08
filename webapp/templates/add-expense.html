@@ -9,10 +9,10 @@
         <!-- Select Group -->
         <div class="form-group">
             <label for="group">Select Group</label>
-            <select id="group" name="group_id" required>
+            <select id="group" name="group_id" required onchange="updateGroupMembers()">
                 <option value="" disabled selected>Choose a group</option>
                 {% for group in groups %}
-                    <option value="{{ group['_id'] }}">{{ group['group_name'] }}</option>
+                    <option value="{{ group['_id'] }}" data-members='{{ group["group_members"] | tojson | safe }}'>{{ group['group_name'] }}</option>
                 {% endfor %}
             </select>
         </div>              
@@ -34,11 +34,6 @@
             <label for="paid-by">Paid By</label>
             <select id="paid-by" name="paid_by" required>
                 <option value="" disabled selected>Select who paid</option>
-                {% for group in groups %}
-                    {% for member in group.group_members %}
-                        <option value="{{ member.name }}">{{ member.name }}</option>
-                    {% endfor %}
-                {% endfor %}
             </select>
         </div>        
               
@@ -46,15 +41,10 @@
         <!-- Split Among -->
         <div class="form-group">
             <label for="split-with">Split With</label>
-            <select id="split-with" name="split_with[]" multiple required>
-                {% for group in groups %}
-                    {% for member in group.group_members %}
-                        <option value="{{ member.name }}">{{ member.name }}</option>
-                    {% endfor %}
-                {% endfor %}
-            </select>
-            <small class="helper-text">Hold Ctrl (Windows) or Command (Mac) to select multiple members.</small>
-        </div>              
+            <div id="split-with">
+            </div>
+            <small class="helper-text">Select members to split the expense with.</small>
+        </div>
         
 
         <!-- Percentages -->
@@ -70,6 +60,63 @@
 </section>
 
 <script>
+    
+    function updateGroupMembers() {
+        const group = document.getElementById('group');
+        const selected = group.options[group.selectedIndex];
+        
+        if(!selected || !selected.getAttribute('data-members')) {
+            console.error("No group selected or no members available.");
+            return;
+        }
+        const membersData = selected.getAttribute('data-members');
+        
+        let members = [];
+        try {
+            members = JSON.parse(membersData);
+            console.log("Parsed members:", members);
+        } catch(e) {
+            console.error("failed to parse group memebrs:", e);
+            return;
+        }
+        
+        const paidBy = document.getElementById('paid-by');
+        paidBy.innerHTML = '<option value="" disabled selected>Select who paid</option>';
+        members.forEach(member => {
+            const option = document.createElement('option');
+            option.value = member;
+            option.textContent = member;
+            paidBy.appendChild(option);
+        });
+        
+        const splitWith = document.getElementById('split-with');
+        splitWith.innerHTML = '';
+        members.forEach(member => {
+            const container = document.createElement('div');
+            container.className = 'member-checkbox';
+            container.tabIndex = 0;
+            
+            const label = document.createElement('label');
+            label.className = 'checkbox-label';
+            label.textContent = member;
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'split_with[]';
+            checkbox.value = member;
+            checkbox.id = `checkbox-${member}`;
+            
+            container.appendChild(checkbox);
+            container.appendChild(label);
+            
+            container.addEventListener('click', () => {
+                checkbox.checked = !checkbox.checked;
+                container.classList.toggle('selected', checkbox.checked);
+            });
+            
+            splitWith.appendChild(container);
+        });
+    }
     // Frontend validation for percentages
     document.querySelector('form').addEventListener('submit', function(e) {
         const percentages = document.getElementById('percentages').value.split(',');

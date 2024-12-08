@@ -16,7 +16,15 @@
                 <p>Members: {{ group.group_members | length }}</p>
                 <ul class="member-list">
                     {% for member in group.group_members %}
-                        <li>{{ member.name }}: {{ member.balance }}</li>
+                        <li>{{ member }}:
+                            {% if group.balances[member] < 0 %}
+                                Owes ${{ group.balances[member] | abs }}
+                            {% elif group.balances[member] > 0 %}
+                                Owed ${{ group.balances[member] }}
+                            {% else %}
+                                Settled
+                            {% endif %}
+                        </li>
                     {% endfor %}
                 </ul>
             </li>
