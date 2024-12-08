@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: ["*"]
+    branches: [main]
 
 jobs:
   build_and_deliver:
@@ -29,6 +29,10 @@ jobs:
           venv/bin/pip install -r requirements.txt
 
       - name: Run tests with coverage
+        env:
+          MONGO_DBNAME: TestDB
+          MONGO_URI: mongodb://localhost:27017
+
         run: |
           venv/bin/python -m pytest webapp/web_test.py
 
