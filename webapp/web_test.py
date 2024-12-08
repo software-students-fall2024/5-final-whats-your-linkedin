@@ -2,7 +2,13 @@ import pytest
 from bson import ObjectId
 from app import app, col_users, col_groups
 from flask import session
+import os
 
+@pytest.fixture(autouse=True)
+def set_test_env(monkeypatch):
+    # Mock the environment variable for DBNAME
+    monkeypatch.setenv("MONGO_DBNAME", "TestDB")
+    monkeypatch.setenv("MONGO_URL", "TestDBURL")
 
 @pytest.fixture
 def client():
