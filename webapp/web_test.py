@@ -3,6 +3,7 @@ from bson import ObjectId
 from app import app, col_users, col_groups
 from flask import session
 
+
 @pytest.fixture
 def client():
     app.config['TESTING'] = True

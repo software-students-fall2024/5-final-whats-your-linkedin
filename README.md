@@ -87,7 +87,7 @@ To set up this project locally, follow these steps:
     docker run -p 5001:5000 webapp
     ```
     
-- This will start the Flask app inside the container and map it to port 5001 on your host machine. You can access the application at http://127.0.0.1:5001/. 
+- This will start the Flask app inside the container and map it to port 8080 on your host machine. You can access the application at http://127.0.0.1:8080/. 
 
 4b. **Run Locally**:
     ```bash

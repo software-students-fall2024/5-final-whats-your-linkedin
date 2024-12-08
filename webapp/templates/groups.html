@@ -8,7 +8,7 @@
     <p>Below are the groups you are part of. Select a group to view details or manage expenses.</p>
     <div class="search-bar-container">
             <input type="text" id="search-bar" placeholder="Search by group name" oninput="filterGroups()">
-            <a href="{{ url_for('create_group') }}" class="button">Create New Group</a>
+            <a href="{{ url_for('create_group') }}" class="create-group-button">Create New Group</a>
     </div>
     <div class="group-container" id="group-list">
         {% for group in groups %}
