@@ -2,13 +2,25 @@ import pytest
 from bson import ObjectId
 from app import app, col_users, col_groups
 from flask import session
-import os
+import mongomock
+
 
 @pytest.fixture(autouse=True)
 def set_test_env(monkeypatch):
-    # Mock environment variables before app import
+    # Mock environment variables
     monkeypatch.setenv("MONGO_DBNAME", "TestDB")
-    monkeypatch.setenv("MONGO_URI", "mongodb://localhost:27017")
+    monkeypatch.setenv("MONGO_URI", "mocked://localhost")
+
+@pytest.fixture
+def mock_mongo_client(monkeypatch):
+    # Replace the real MongoClient with a mongomock client
+    mock_client = mongomock.MongoClient()
+    monkeypatch.setattr("app.client", mock_client)
+    # Use the mock database
+    db = mock_client["TestDB"]
+    monkeypatch.setattr("app.col_users", db["USERS"])
+    monkeypatch.setattr("app.col_groups", db["GROUPS"])
+    return mock_client
 
 @pytest.fixture
 def client():
