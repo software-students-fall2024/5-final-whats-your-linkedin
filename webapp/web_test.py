@@ -2,15 +2,7 @@ import pytest
 from bson import ObjectId
 from app import app, col_users, col_groups
 from flask import session
-import os
 
-
-@pytest.fixture(autouse=True)
-def set_test_env(monkeypatch):
-    # Mock the environment variable for DBNAME
-    monkeypatch.setenv("MONGO_DBNAME", "SplitSmart_test")
-    monkeypatch.setenv("MONGO_URL", "TestDBURL")
-    
 
 @pytest.fixture
 def client():
@@ -22,6 +14,8 @@ def client():
 def test_user():
     """Insert a test user into the DB and yield it for testing."""
     user_id = ObjectId()
+    # Password "testpass" hashed with bcrypt (example hash)
+    # You can generate your own hash using bcrypt in a Python shell.
     hashed_password = b"$2b$12$W0.Vj4Rg.T/JC2yKWZVJZ.u42eQZMebZxbXr6kJ9QZPdbjXQfSG06"
     user = {
         "_id": user_id,
@@ -229,3 +223,4 @@ def test_add_expense_success(client, logged_in_user, test_group):
     assert expense["paid_by"] == "testuser"
     assert expense["split_among"]["testuser"] == 100.0
     assert b"Test Dinner" in response.data  # expense listed on group details page
+    
