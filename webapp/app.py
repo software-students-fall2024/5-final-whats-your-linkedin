@@ -10,12 +10,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
+app.secret_key = os.getenv("SECRET_KEY", "test")
 
 # MongoDB Connection
-uri = os.getenv("MONGO_URI")
+uri = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 client = MongoClient(uri, server_api=ServerApi('1'))
-mydb = client[os.getenv("MONGO_DBNAME")]
+mydb = client[os.getenv("MONGO_DBNAME", "test_database")]
 col_users = mydb["USERS"]
 col_groups = mydb["GROUPS"]
 
