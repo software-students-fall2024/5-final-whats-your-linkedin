@@ -15,4 +15,3 @@ python-dotenv
 pytest_mock_resources
 pytest
 python-on-whales
-

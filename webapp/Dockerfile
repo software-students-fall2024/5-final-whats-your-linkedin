@@ -4,7 +4,7 @@ WORKDIR /webapp
 COPY requirements.txt ./
 
 RUN pip3 install --trusted-host pypi.python.org -r requirements.txt
-COPY .env .env
+# COPY .env .env
 
 ADD . .
 
