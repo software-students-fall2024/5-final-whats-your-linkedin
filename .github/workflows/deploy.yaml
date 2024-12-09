@@ -32,3 +32,7 @@ jobs:
 
       - name: Push Docker image to DigitalOcean Registry
         run: docker push registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/split-smart:latest
+
+      - name: Run Garbage Collection
+        run: doctl registry garbage-collection start [--include-untagged-manifests] [${{ secrets.REGISTRY_NAME }}]
+
