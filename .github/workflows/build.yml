@@ -9,7 +9,6 @@ on:
 jobs:
   build_and_deliver:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -28,9 +27,12 @@ jobs:
           venv/bin/pip install --upgrade pip setuptools
           venv/bin/pip install -r requirements.txt
 
+      - name: Install mongomock
+        run: |
+          venv/bin/pip install mongomock
+
       - name: Run tests with coverage
         run: |
-          pip install mongomock
           venv/bin/python -m pytest webapp/web_test.py
 
       - name: Log in to Docker Hub
@@ -44,3 +46,4 @@ jobs:
 
       - name: Push image
         run: docker push popilopi/webapp:latest
+        
