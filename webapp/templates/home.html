@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 
-{% block title %}Login - SplitSmart{% endblock %}
+{% block title %}Home - SplitSmart{% endblock %}
 
 {% block content %}
-        <section class="row hero">
-            <h1>Welcome to SplitSmart!</h1>
-            <p>Manage your expenses effortlessly with your friends and groups.</p>
-            <a href="{{ url_for('add_expense') }}" class="button">Add an Expense</a>
-        </section>
-        <section id="groups" class="row">
-            <h2>Give us a like!</h2>
-        </section>
-        <a href="{{ url_for('logout') }}" class = "button secondary">Logout</a>
-        
+<section class="row hero">
+    <h1>Welcome to SplitSmart!</h1>
+    <p>Manage your expenses effortlessly with your friends and groups.</p>
+    
+    <a href="{{ url_for('add_expense') }}" class="button">Add an Expense</a>
+    <h2>Quote of the Day</h2>
+    <p>"{{ quote }}"</p>
+    <p><em>- {{ author }}</em></p>
+</section>
+
+<a href="{{ url_for('logout') }}" class="button secondary">Logout here</a>
+
 {% endblock %}

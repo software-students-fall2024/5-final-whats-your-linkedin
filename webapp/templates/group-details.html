@@ -39,6 +39,7 @@
                                 <li>{{ member.name }}: ${{ member.amount }}</li>
                             {% endfor %}
                         </ul>
+                        <button class="delete-expense-button" data-expense-id="{{ expense.expense_id }}">Delete</button>
                     </li>
                 {% endfor %}
             </ul>
@@ -47,11 +48,33 @@
         {% endif %}
     </div>    
     
-    
     <div class="action-buttons">
         <a href="{{ url_for('add_expense') }}" class="button">Add Expense</a>
         <a href="{{ url_for('groups') }}" class="button secondary">Back to Groups</a>
     </div>
 </section>
-{% endblock %}
 
+<script>
+document.querySelectorAll('.delete-expense-button').forEach(button => {
+    button.addEventListener('click', function() {
+        const expenseId = this.getAttribute('data-expense-id');
+        if (confirm('Are you sure you want to delete this expense?')) {
+            fetch(`/delete-expense/${expenseId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert('Failed to delete expense.');
+                }
+            });
+        }
+    });
+});
+</script>
+{% endblock %}
