@@ -407,47 +407,5 @@ def settle_payment():
 
     return render_template("settle-payment.html", groups=group_details)
 
-
-@app.route('/settle/<group_id>')
-def settle(group_id):
-    if 'username' not in session:
-        flash("Not logged in. Please log in first", "error")
-        return redirect(url_for("login"))
-
-    group = col_groups.find_one({"_id": ObjectId(group_id)})
-    if not group:
-        flash("Group not found.", "error")
-        return redirect(url_for("groups"))
-
-    balances = group.get("balances", {})
-    payments = calculate_payments(balances)
-
-    return render_template('settle.html', group_name=group["group_name"], payments=payments)
-
-def calculate_payments(balances):
-    creditors = []
-    debtors = []
-
-    for member, balance in balances.items():
-        if balance > 0:
-            creditors.append((member, balance))
-        elif balance < 0:
-            debtors.append((member, -balance))
-
-    payments = []
-    while creditors and debtors:
-        creditor, credit_amount = creditors.pop()
-        debtor, debt_amount = debtors.pop()
-
-        payment_amount = min(credit_amount, debt_amount)
-        payments.append((debtor, creditor, payment_amount))
-
-        if credit_amount > debt_amount:
-            creditors.append((creditor, credit_amount - payment_amount))
-        elif debt_amount > credit_amount:
-            debtors.append((debtor, debt_amount - payment_amount))
-
-    return payments
-
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
