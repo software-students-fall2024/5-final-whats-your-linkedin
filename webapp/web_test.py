@@ -250,3 +250,89 @@ def test_add_expense_success(client, logged_in_user, test_group):
     assert expense["amount"] == 100.0
     assert expense["paid_by"] == "testuser"
     assert expense["split_among"]["testuser"] == 100.0
+
+### SETTLE PAYMENTS TESTS ###
+
+def test_settle_payment_not_logged_in(client):
+    response = client.get("/settle-payment", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Not logged in" in response.data
+
+
+def test_settle_payment_page_loads(client, logged_in_user):
+    response = client.get("/settle-payment", follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Settle Payments" in response.data
+
+
+def test_settle_payment_invalid_group(client, logged_in_user):
+    data = {
+        "group_id": "nonexistentgroup",
+        "payment_amount": "50",
+    }
+    response = client.post("/settle-payment", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Group not found" in response.data
+
+
+def test_settle_payment_invalid_amount(client, logged_in_user, test_group):
+    data = {
+        "group_id": test_group["_id"],
+        "payment_amount": "-50",
+    }
+    response = client.post("/settle-payment", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Payment amount must be greater than zero" in response.data
+
+
+def test_settle_payment_no_balance(client, logged_in_user, test_group):
+    app.col_groups.update_one(
+        {"_id": test_group["_id"]},
+        {"$set": {"balances": {test_group["group_members"][0]: 0}}}
+    )
+
+    data = {
+        "group_id": test_group["_id"],
+        "payment_amount": "50",
+    }
+    response = client.post("/settle-payment", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    assert b"You have no outstanding balance to settle." in response.data
+
+
+def test_settle_payment_full_balance(client, logged_in_user, test_group):
+    app.col_groups.update_one(
+        {"_id": test_group["_id"]},
+        {"$set": {"balances": {test_group["group_members"][0]: -50, "creditor": 50}}}
+    )
+
+    data = {
+        "group_id": test_group["_id"],
+        "payment_amount": "50",
+    }
+    response = client.post("/settle-payment", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Payment settled successfully!" in response.data
+
+    updated_group = app.col_groups.find_one({"_id": test_group["_id"]})
+    assert updated_group["balances"][test_group["group_members"][0]] == 0
+    assert updated_group["balances"]["creditor"] == 0
+
+
+def test_settle_payment_partial_balance(client, logged_in_user, test_group):
+    app.col_groups.update_one(
+        {"_id": test_group["_id"]},
+        {"$set": {"balances": {test_group["group_members"][0]: -75, "creditor": 75}}}
+    )
+
+    data = {
+        "group_id": test_group["_id"],
+        "payment_amount": "50",
+    }
+    response = client.post("/settle-payment", data=data, follow_redirects=True)
+    assert response.status_code == 200
+    assert b"Payment settled successfully!" in response.data
+
+    updated_group = app.col_groups.find_one({"_id": test_group["_id"]})
+    assert updated_group["balances"][test_group["group_members"][0]] == -25
+    assert updated_group["balances"]["creditor"] == 25
