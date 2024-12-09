@@ -23,6 +23,7 @@ RUN pip install psycopg2-binary
 RUN pip install pymongo
 RUN pip install bcrypt 
 RUN pip install python-dotenv
+RUN pip install requests
 
 # Ensure pipenv is in PATH
 ENV PATH="/root/.local/bin:$PATH"
