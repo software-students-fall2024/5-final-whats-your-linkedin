@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Settle Payment{% endblock %}
+
+{% block content %}
+<section class="row">
+    <h1>Settle Payment</h1>
+    <form action="{{ url_for('settle_payment') }}" method="POST">
+        <div class="form-group">
+            <label for="group_id">Select Group</label>
+            <select name="group_id" id="group_id" required>
+                <option value="" disabled selected>Select a group</option>
+                {% for group in groups %}
+                    <option value="{{ group.group_id }}">{{ group.group_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="payment_amount">Payment Amount</label>
+            <input type="number" step="0.01" name="payment_amount" id="payment_amount" required placeholder="Enter amount">
+        </div>
+        <button type="submit" class="button">Settle Payment</button>
+    </form>
+</section>
+{% endblock %}
+
