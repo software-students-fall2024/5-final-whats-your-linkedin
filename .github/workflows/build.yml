@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: ["*"]
+    branches: [main]
 
 jobs:
   build_and_deliver:
@@ -46,4 +46,3 @@ jobs:
 
       - name: Push image
         run: docker push popilopi/webapp:latest
-        

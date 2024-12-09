@@ -1,5 +1,7 @@
 # SplitSmart
 
+[![Upload image to dockerhub](https://github.com/software-students-fall2024/5-final-whats-your-linkedin/actions/workflows/build.yml/badge.svg)](https://github.com/software-students-fall2024/5-final-whats-your-linkedin/actions/workflows/build.yml)
+
 [![Deploy to DigitalOcean Registry](https://github.com/software-students-fall2024/5-final-whats-your-linkedin/actions/workflows/deploy.yaml/badge.svg)](https://github.com/software-students-fall2024/5-final-whats-your-linkedin/actions/workflows/deploy.yaml)
 
 ![event-logger](https://github.com/software-students-fall2024/5-final-whats-your-linkedin/actions/workflows/event-logger.yml/badge.svg)
