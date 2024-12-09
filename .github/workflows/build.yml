@@ -9,7 +9,6 @@ on:
 jobs:
   build_and_deliver:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
@@ -27,6 +26,11 @@ jobs:
           python -m venv venv
           venv/bin/pip install --upgrade pip setuptools
           venv/bin/pip install -r requirements.txt
+
+      - name: Install mongomock and requests
+        run: |
+          venv/bin/pip install requests
+          venv/bin/pip install mongomock
 
       - name: Run tests with coverage
         run: |
