@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          venv/bin/python pip install mongomock
+          pip install mongomock
           venv/bin/python -m pytest webapp/web_test.py
 
       - name: Log in to Docker Hub
