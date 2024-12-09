@@ -335,6 +335,78 @@ def delete_expense(expense_id):
     )
 
     return jsonify({'success': True, 'message': 'Expense deleted successfully'})
+    
+@app.route('/settle-payment', methods=['GET', 'POST'])
+def settle_payment():
+    if 'username' not in session:
+        flash("Not logged in. Please log in first", "error")
+        return redirect(url_for("login"))
+
+    username = session['username']
+    user = col_users.find_one({"name": username})
+    if not user:
+        flash("User not found.", "error")
+        return redirect(url_for("home"))
+
+    user_groups = user.get("groups", [])
+    group_details = []
+    for group_id in user_groups:
+        group = col_groups.find_one({"_id": group_id})
+        if group:
+            group_details.append({
+                "group_name": group["group_name"],
+                "group_id": group["_id"],
+                "balances": group["balances"]
+            })
+
+    if request.method == 'POST':
+        try:
+            group_id = request.form.get("group_id")
+            payment_amount = float(request.form.get("payment_amount"))
+
+            if payment_amount <= 0:
+                flash("Payment amount must be greater than zero.", "error")
+                return redirect(url_for("settle_payment"))
+
+            group = col_groups.find_one({"_id": group_id})
+            if not group:
+                flash("Group not found.", "error")
+                return redirect(url_for("settle_payment"))
+
+            balances = group["balances"]
+            if balances[username] >= 0:
+                flash("You have no outstanding balance to settle.", "info")
+                return redirect(url_for("settle_payment"))
+
+            remaining_debt = abs(balances[username])
+            if payment_amount >= remaining_debt:
+                payment_amount = remaining_debt
+
+            balances[username] += payment_amount
+            creditors = [name for name, balance in balances.items() if balance > 0]
+
+            for creditor in creditors:
+                if payment_amount <= 0:
+                    break
+                creditor_balance = balances[creditor]
+                pay_to_creditor = min(creditor_balance, payment_amount)
+                balances[creditor] -= pay_to_creditor
+                payment_amount -= pay_to_creditor
+
+            col_groups.update_one(
+                {"_id": group["_id"]},
+                {"$set": {"balances": balances}}
+            )
+
+            flash("Payment settled successfully!", "success")
+            return redirect(url_for("groups"))
+
+        except Exception as e:
+            flash(f"An error occurred: {str(e)}", "error")
+            return redirect(url_for("settle_payment"))
+
+    return render_template("settle-payment.html", groups=group_details)
+
 
 @app.route('/settle/<group_id>')
 def settle(group_id):
