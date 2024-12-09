@@ -1,38 +1,35 @@
 import pytest
-from bson import ObjectId
-from app import app, col_users, col_groups
-from flask import session
 import os
-from unittest.mock import patch, MagicMock
-import pytest
-
-
+from bson import ObjectId
+from unittest.mock import patch
+import mongomock
+from app import app
 
 @pytest.fixture
 def app_fixture():
     """
-    Create and configure a new app instance for testing with mocked db.
+    Create and configure a new app instance for testing with a mock (in-memory) MongoDB.
     """
-    with patch.dict(
-        os.environ,
-        {
-            "MONGO_URI": "mongodb://localhost:27017",
-            "MONGO_DBNAME": "test_database",
-        },
-    ):
-        with patch("app.MongoClient") as mock_mongo_client:
-            # Mock database and collection
-            mock_db = MagicMock()
-            mock_mongo_client.return_value = {"test_database": mock_db}
+    # Set environment variables to something known
+    with patch.dict(os.environ, {"MONGO_URI": "mongodb://fakeuri:27017", "MONGO_DBNAME": "test_database"}):
+        # Create a mongomock client and database
+        mock_client = mongomock.MongoClient()
+        test_db = mock_client["test_database"]
 
-            app.config.update({"TESTING": True})
-            yield app, mock_db
+        # Patch the app's client and database references
+        # Assuming 'col_users' and 'col_groups' are defined in app.py like:
+        #    col_users = mydb["USERS"]
+        #    col_groups = mydb["GROUPS"]
+        # We'll replace 'app.mydb', 'app.col_users', and 'app.col_groups' with our mock versions.
+        with patch("app.client", mock_client):
+            with patch("app.mydb", test_db):
+                with patch("app.col_users", test_db["USERS"]):
+                    with patch("app.col_groups", test_db["GROUPS"]):
+                        app.config.update({"TESTING": True})
+                        yield app, test_db
 
 @pytest.fixture
 def client(app_fixture):
-    """
-    A test client for the app.
-    """
     app, _ = app_fixture
     return app.test_client()
 
