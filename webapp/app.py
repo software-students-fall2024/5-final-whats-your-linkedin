@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, jsonify, render_template, request, redirect, url_for, flash, session
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from bson.objectid import ObjectId  # To handle MongoDB ObjectIds
@@ -6,6 +6,7 @@ import os
 import datetime
 import bcrypt
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
@@ -37,7 +38,19 @@ def home():
     if 'username' not in session:
         flash("Not logged in. Please log in first", "error")
         return redirect(url_for("login"))
-    return render_template('home.html', username=session['username'])
+
+    # Fetch the quote of the day
+    try:
+        response = requests.get('https://zenquotes.io/api/today')
+        response.raise_for_status()
+        quote_data = response.json()
+        quote = quote_data[0]['q']
+        author = quote_data[0]['a']
+    except requests.RequestException as e:
+        quote = "Unable to fetch quote of the day."
+        author = ""
+
+    return render_template('home.html', username=session['username'], quote=quote, author=author)
 
 
 @app.route('/groups')
@@ -313,6 +326,26 @@ def logout():
     flash("Logged out successfully.", "success")
     return redirect(url_for("base"))
 
+@app.route('/delete-expense/<expense_id>', methods=['DELETE'])
+def delete_expense(expense_id):
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Not logged in'}), 401
+
+    username = session['username']
+    user = col_users.find_one({"name": username})
+    if not user:
+        return jsonify({'success': False, 'message': 'User not found'}), 404
+
+    group = col_groups.find_one({"expenses.expense_id": expense_id})
+    if not group:
+        return jsonify({'success': False, 'message': 'Expense not found'}), 404
+
+    col_groups.update_one(
+        {"_id": group["_id"]},
+        {"$pull": {"expenses": {"expense_id": expense_id}}}
+    )
+
+    return jsonify({'success': True, 'message': 'Expense deleted successfully'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

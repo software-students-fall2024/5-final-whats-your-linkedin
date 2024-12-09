@@ -37,13 +37,13 @@
 
 ## Demo
 
-Add pictures of final product to demo the usage
+A production version of SplitSmart can be found [here](https://sea-lion-app-cr4qj.ondigitalocean.app/)
 
 ---
 
 ## Container Image
 
-Container images for webapp hosted on dockerhub: https://hub.docker.com/r/popilopi/webapp
+Container images for webapp hosted on dockerhub: <https://hub.docker.com/r/popilopi/webapp>
 
 ---
 
@@ -64,34 +64,40 @@ Container images for webapp hosted on dockerhub: https://hub.docker.com/r/popilo
 To set up this project locally, follow these steps:
 
 1. **Clone the repository** (or download the files):
+
     ```bash
     git clone https://github.com/software-students-fall2024/5-final-whats-your-linkedin.git
     cd <repository-folder>
     ```
-    
+
 2. **Create a virtual environment**:
+
     - make sure to create `.env` file under both `web-app` and `machine-learning-client` folder
     - create a virtual environment
+
     ```bash
     python -m venv venv
     source venv/bin/activate  # On Windows use `venv\Scripts\activate`
     ```
 
 3. **Install the dependencies**:
+
     ```bash
     cd webapp/
     pip install -r requirements.txt
     ```
 
 4a. **Build using Docker**:
+
     ```bash
     docker build -t webapp .
     docker run -p 5001:5000 webapp
     ```
-    
-- This will start the Flask app inside the container and map it to port 8080 on your host machine. You can access the application at http://127.0.0.1:8080/. 
+
+- This will start the Flask app inside the container and map it to port 8080 on your host machine. You can access the application at <http://127.0.0.1:8080/>.
 
 4b. **Run Locally**:
+
     ```bash
     python app.py
     ```
@@ -129,7 +135,7 @@ Run the test file to validate the application:
     ```bash
     pytest
     ```
-    
+
 ### Deployment
 
 Automated CI/CD pipelines for easy deployment
@@ -156,7 +162,7 @@ You are free to use, modify, and distribute this software under the terms of the
 
 ---
 
-## Acknowledgments
+## Acknowledgements
 
 - Flask Documentation: [Flask](https://flask.palletsprojects.com/)
 - MongoDB Documentation: [MongoDB](https://www.mongodb.com/)
